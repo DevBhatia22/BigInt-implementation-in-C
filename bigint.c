@@ -43,29 +43,53 @@ BigInt* createI(char* str){
     num->head = (Node*) malloc(sizeof(Node));
     Node* tempNode = num->head;
     num->head->size = 0;
+    int i = 0;
+    if(str[i] == '-'){
+        num->sign = 1;
+        i++;
+    }
     
-    for(int i = strlen(str) - 1; i >= 0; i--){
+    for(i; i < strlen(str); i++){
         
-        char temp[4];
+        char temp[4] = {'0'};
         int limit = 4;
         
-        while(limit-- && i >= 0){
-            temp[limit] = str[i];
-            i--;
+        while(limit-- && i < strlen(str)){
+            temp[3 - limit] = str[i];
+            i++;
         }
         
         int tempNum = atoi(temp);
         tempNode->digits = tempNum;
         
-        Node* SN = (Node*) malloc(sizeof(Node));
-        tempNode->next= SN;
-        tempNode = SN;
-        tempNode->next = NULL;
-        
+        if(i != strlen(str)){
+            Node* SN = (Node*) malloc(sizeof(Node));
+            tempNode->next= SN;
+            tempNode = SN;
+            tempNode->next = NULL;
+            
+        }
         num->head->size++;
     }
     
     return num;
+}
+
+void printI(BigInt* numI){
+    Node* tempNode = numI->head;
+    if(numI->sign){
+        printf("-");
+    }
+    while(tempNode){
+        printf("%d", tempNode->digits);
+        tempNode = tempNode->next;
+    }
+}
+
+int main(){
+    BigInt* num = createI("-123456789012345678901234567890234567890");
+    printI(num);
+    printf("\n");
 }
 
 #endif
