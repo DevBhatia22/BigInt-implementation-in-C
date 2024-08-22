@@ -58,11 +58,12 @@ BigInt* createI(char* str){
             temp[3 - limit] = str[i];
             i++;
         }
+        i--;
         
         int tempNum = atoi(temp);
         tempNode->digits = tempNum;
         
-        if(i != strlen(str)){
+        if(i != strlen(str) - 1){
             Node* SN = (Node*) malloc(sizeof(Node));
             tempNode->next= SN;
             tempNode = SN;
@@ -87,9 +88,10 @@ void printI(BigInt* numI){
 }
 
 int main(){
-    BigInt* num = createI("-123456789012345678901234567890234567890");
+    BigInt* num = createI("-123456");
     printI(num);
     printf("\n");
+    printf("%d", num->head->size);
 }
 
 #endif
