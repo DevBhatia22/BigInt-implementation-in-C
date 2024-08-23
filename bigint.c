@@ -33,6 +33,8 @@ BigInt* addI(BigInt* num1, BigInt* num2);
 BigInt* subI(BigInt* num1, BigInt* num2);
 BigInt* mulI(BigInt* num1, BigInt* num2);
 BigInt* divI(BigInt* num1, BigInt* num2);
+int absCompI(BigInt* num1, BigInt* num2);
+int compI(BigInt* num1, BigInt* num2);
 
 
 
@@ -96,6 +98,62 @@ void printI(BigInt* numI){
     
 }
 
+//Compare 1
+int absCompI(BigInt* num1, BigInt* num2){
+    
+    if(num1->size > num2->size){
+        return 1;
+    }
+    if(num1->size < num2->size){
+        return -1;
+    }
+    
+    Node* n1 = num1->head, *n2 = num2->head;
+    
+    while(n1){
+        if(n1->digits > n2->digits){
+            return 1;
+        }
+        if(n1->digits < n2->digits){
+            return -1;
+        }
+        
+        n1 = n1->next;
+        n2 = n2->next;
+    }
+    
+    return 0;
+    
+}
+
+//Compare 2
+int compI(BigInt* num1, BigInt* num2){
+    
+    if(num1->size > num2->size || (!num1->sign && num2->sign)){
+        return 1;
+    }
+    if(num1->size < num2->size || (num1->sign && !num2->sign)){
+        return -1;
+    }
+    
+    Node* n1 = num1->head, *n2 = num2->head;
+    
+    while(n1){
+        if(n1->digits > n2->digits){
+            return 1;
+        }
+        if(n1->digits < n2->digits){
+            return -1;
+        }
+        
+        n1 = n1->next;
+        n2 = n2->next;
+    }
+    
+    return 0;
+    
+}
+
 //add
 BigInt* addI(BigInt* num1, BigInt* num2){
     
@@ -150,13 +208,31 @@ BigInt* addI(BigInt* num1, BigInt* num2){
     }
 }
 
+//sub
+BigInt* subI(BigInt* num1, BigInt* num2){
+    
+    if(num1->sign && !num2->sign){ // (-x) - y => (-x) + (-y)
+        num2->sign = 1;
+        BigInt* answer = addI(num1, num2);
+        num2->sign = 0;
+        return answer;
+    }
+    if(!num1->sign && num2->sign){ // x - (-y) => x + y
+        num2->sign = 0;
+        BigInt* answer = addI(num1, num2);
+        num2->sign = 1;
+        return answer;
+    }
+    
+}
+
 int main(){
-    BigInt* num1 = createI("-99999999");
+    BigInt* num1 = createI("99999999");
     BigInt* num2 = createI("-99999999");
-    BigInt* num = addI(num1, num2);
+    BigInt* num = subI(num2, num1);
     printI(num);
-    printf("\n");
-    printf("%d\n", num->head->digits);
+    // printf("%d\n", num);
+    // printf("%d\n", num->head->digits);
 }
 
 // #endif
