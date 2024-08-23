@@ -35,6 +35,8 @@ BigInt* mulI(BigInt* num1, BigInt* num2);
 BigInt* divI(BigInt* num1, BigInt* num2);
 int absCompI(BigInt* num1, BigInt* num2);
 int compI(BigInt* num1, BigInt* num2);
+void _reBuildI(BigInt* num);
+void _printI(BigInt* num);
 
 
 
@@ -82,8 +84,64 @@ BigInt* createI(char* str){
     return num;
 }
 
+//Rebuild
+void _reBuildI(BigInt* num){
+    
+    Node* tempNode = num->head;
+    
+    while(tempNode != num->tail && tempNode->digits == 0){
+        tempNode = tempNode->next;
+        free(tempNode->prev);
+        tempNode->prev = NULL;
+    }
+    
+    num->head = tempNode;
+    
+    return;
+    
+}
+
 //Print
 void printI(BigInt* numI){
+    
+    _reBuildI(numI);
+    
+    Node* tempNode = numI->head;
+    
+    if(numI->sign){
+        printf("-");
+    }
+    
+    int zero = 0;
+    while(tempNode){
+        if(tempNode != numI->head){    
+            int limit = 4;
+            
+            if(tempNode->digits < 10){
+                limit = 1;
+            }
+            else if(tempNode->digits < 100){
+                limit = 2;
+            }
+            else if(tempNode->digits < 1000){
+                limit = 3;
+            }
+
+            for(int i = 0; i < 4 - limit; i++){
+                printf("0");
+            }
+        }
+        printf("%d", tempNode->digits);
+        tempNode = tempNode->next;
+        zero = 1;
+    }
+    
+}
+
+//_PrintI
+void _printI(BigInt* numI){
+    
+    _reBuildI(numI);
     
     Node* tempNode = numI->head;
     
@@ -92,7 +150,7 @@ void printI(BigInt* numI){
     }
     
     while(tempNode){
-        printf("%d", tempNode->digits);
+        printf("%d ", tempNode->digits);
         tempNode = tempNode->next;
     }
     
@@ -180,7 +238,6 @@ BigInt* addI(BigInt* num1, BigInt* num2){
             
             tempNode->digits = sum % 10000;
             carry = sum / 10000;
-            // printf("%d \n", sum);
             if(x){
                 x = x->prev;
             }
@@ -206,6 +263,20 @@ BigInt* addI(BigInt* num1, BigInt* num2){
         answer->head = tempNode;
         return answer;
     }
+    else{
+        BigInt* answer;
+        if(num2->sign){
+            num2->sign = 0;
+            answer = subI(num1, num2);
+            num2->sign = 1;
+        }
+        else{
+            num1->sign = 0;
+            answer = subI(num2, num1);
+            num1->sign = 1;
+        }
+        return answer;
+    }
 }
 
 //sub
@@ -224,15 +295,79 @@ BigInt* subI(BigInt* num1, BigInt* num2){
         return answer;
     }
     
+    int borrow = 0;
+    BigInt* answer = (BigInt*) malloc(sizeof(BigInt));
+    answer->head = (Node*) malloc(sizeof(Node));
+    answer->tail = answer->head;
+    Node* tempNode = answer->head;
+    
+    int comp = absCompI(num1, num2);
+    if(!comp){
+        answer->head->digits = 0;
+        return answer;
+    }
+    Node* n1, *n2;
+    if(comp == -1){
+        n1 = num2->tail;
+        n2 = num1->tail;
+        answer->sign = !num2->sign;
+    }
+    else{
+        n1 = num1->tail;
+        n2 = num2->tail;
+        answer->sign = num2->sign;
+    }
+    
+    while(n1 || n2){
+        int sub = borrow;
+        borrow = 0;
+        if(n1){
+            if(n1->digits + sub < 0){
+                borrow--;
+                int num = 10000 + n1->digits;
+                sub += num;
+            }
+            else{
+                sub += n1->digits;
+            }
+        }
+        if(n2){
+            if((sub - n2->digits) < 0){
+                borrow--;
+                sub += 10000;
+            }
+            sub -= n2->digits;
+        }
+        
+        tempNode->digits = sub;
+        if(n1){
+            n1 = n1->prev;
+        }
+        if(n2){
+            n2 = n2->prev;
+        }
+        if(n1 || n2){
+            tempNode->prev = (Node*) malloc(sizeof(Node));
+            tempNode->prev->next = tempNode;
+            tempNode = tempNode->prev;
+        }
+    }
+    
+    answer->head = tempNode;
+    
+    _reBuildI(answer);
+    
+    return answer;
+    
 }
 
 int main(){
-    BigInt* num1 = createI("99999999");
-    BigInt* num2 = createI("-99999999");
-    BigInt* num = subI(num2, num1);
+    BigInt* num1 = createI("-88888");
+    BigInt* num2 = createI("99999");
+    BigInt* num = addI(num1, num2);
     printI(num);
     // printf("%d\n", num);
-    // printf("%d\n", num->head->digits);
+    // printf("%d\n", num->tail->prev->digits);
 }
 
 // #endif
