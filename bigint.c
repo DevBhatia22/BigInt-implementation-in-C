@@ -93,6 +93,7 @@ void _reBuildI(BigInt* num){
         tempNode = tempNode->next;
         free(tempNode->prev);
         tempNode->prev = NULL;
+        num->size--;
     }
     
     num->head = tempNode;
@@ -140,8 +141,6 @@ void printI(BigInt* numI){
 
 //_PrintI
 void _printI(BigInt* numI){
-    
-    _reBuildI(numI);
     
     Node* tempNode = numI->head;
     
@@ -350,6 +349,7 @@ BigInt* subI(BigInt* num1, BigInt* num2){
             tempNode->prev = (Node*) malloc(sizeof(Node));
             tempNode->prev->next = tempNode;
             tempNode = tempNode->prev;
+            answer->size++;
         }
     }
     
@@ -361,12 +361,59 @@ BigInt* subI(BigInt* num1, BigInt* num2){
     
 }
 
+//mul
+BigInt* mulI(BigInt* num1, BigInt* num2){
+    
+    int size = num1->size + num2->size;
+    
+    BigInt* answer = (BigInt *) malloc(sizeof(BigInt));
+    answer->head = (Node* ) malloc(sizeof(Node));
+    answer->tail = answer->head;
+    answer->size++;
+    Node* tempNode = answer->tail;
+    Node* array[size];
+    answer->sign = num1->sign ^ num2->sign;
+    
+    for(int i = 0; i < size; i++){
+        array[i] = tempNode;
+        tempNode->digits = 0;
+        Node* temp = (Node*) malloc(sizeof(Node));
+        tempNode->prev = temp;
+        temp->next = tempNode;
+        tempNode = tempNode->prev;
+        answer->size++;
+    }
+    answer->head = tempNode;
+    
+    Node* n1 = num1->tail, *n2 = num2->tail;
+    int i = 0, j = 0;
+    
+    while(n1){
+        while(n2){
+            array[i + j]->digits += n1->digits * n2->digits;
+            array[i + j + 1]->digits += array[i + j]->digits / 10000;
+            array[i + j]->digits %= 10000;
+            n2 = n2->prev;
+            j++;
+        }
+        i++;
+        n1 = n1->prev;
+        n2 = num2->tail;
+        j = 0;
+    }
+    
+    _reBuildI(answer);
+    
+    return answer;
+    
+}
+
 int main(){
-    BigInt* num1 = createI("-88888");
-    BigInt* num2 = createI("99999");
-    BigInt* num = addI(num1, num2);
+    BigInt* num1 = createI("-99999999");
+    BigInt* num2 = createI("-99999999");
+    BigInt* num = mulI(num1, num2);
     printI(num);
-    // printf("%d\n", num);
+    printf("\n%d\n", 100);
     // printf("%d\n", num->tail->prev->digits);
 }
 
