@@ -33,6 +33,7 @@ BigInt* addI(BigInt* num1, BigInt* num2);
 BigInt* subI(BigInt* num1, BigInt* num2);
 BigInt* mulI(BigInt* num1, BigInt* num2);
 BigInt* divI(BigInt* num1, BigInt* num2);
+void _halfI(BigInt* num1);
 int absCompI(BigInt* num1, BigInt* num2);
 int compI(BigInt* num1, BigInt* num2);
 void _reBuildI(BigInt* num);
@@ -220,9 +221,9 @@ BigInt* addI(BigInt* num1, BigInt* num2){
         answer->head = (Node*) malloc(sizeof(Node));
         answer->tail = answer->head;
         answer->sign = num2->sign;
+        answer->size = 1;
         
         Node* tempNode = answer->head;
-        answer->size = 0;
         
         Node* x = num1->tail, *y = num2->tail;
         
@@ -298,6 +299,7 @@ BigInt* subI(BigInt* num1, BigInt* num2){
     BigInt* answer = (BigInt*) malloc(sizeof(BigInt));
     answer->head = (Node*) malloc(sizeof(Node));
     answer->tail = answer->head;
+    answer->size = 1;
     Node* tempNode = answer->head;
     
     int comp = absCompI(num1, num2);
@@ -408,13 +410,74 @@ BigInt* mulI(BigInt* num1, BigInt* num2){
     
 }
 
+//_half
+void _halfI(BigInt* num){
+    Node* tempNode = num->head;
+    int carry = 0;
+    
+    while(tempNode){
+        int tempNum = tempNode->digits + (carry * 10000);
+        
+        carry = 0;
+        if(tempNum % 2){
+            carry = 1;
+        }
+        
+        tempNode->digits = tempNum / 2;
+        
+        tempNode = tempNode->next;
+    }
+    
+    _reBuildI(num);
+    return;
+}
+
+//div
+BigInt* divI(BigInt* num1, BigInt* num2){
+    BigInt* start = createI("0");
+    BigInt* end = num1;
+    BigInt* one = createI("1");
+    BigInt* answer;
+    int n1s = num1->sign;
+    int n2s = num2->sign;
+    num1->sign = 0;
+    num2->sign = 0;
+    int remain = 1;
+    
+    while(absCompI(start, end) < 1){
+        BigInt* mid = addI(start, end);
+        _halfI(mid);
+        BigInt* tempAnswer = mulI(num2, mid);
+        
+        if(absCompI(tempAnswer, num1) == 1){
+            end = subI(mid, one);
+        }
+        else if(absCompI(tempAnswer, num1) == -1){
+            answer = mid;
+            start = addI(mid, one);
+        }
+        else{
+            remain = 0;
+            answer = mid;
+            break;
+        }
+    }
+    answer->sign = n1s ^ n2s;
+    if(remain && answer->sign){
+        answer = subI(answer, one);
+    }
+    
+    num1->sign = n1s;
+    num2->sign = n2s;
+    
+    return answer;
+}
 int main(){
-    BigInt* num1 = createI("-99999999");
-    BigInt* num2 = createI("-99999999");
-    BigInt* num = mulI(num1, num2);
+    BigInt* num1 = createI("-3187141");
+    BigInt* num2 = createI("318714");
+    BigInt* num = divI(num1, num2);
     printI(num);
-    printf("\n%d\n", 100);
-    // printf("%d\n", num->tail->prev->digits);
+    printf("%d\n", num->size);
 }
 
 // #endif
