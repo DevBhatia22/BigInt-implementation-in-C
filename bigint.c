@@ -34,12 +34,14 @@ BigInt* subI(BigInt* num1, BigInt* num2);
 BigInt* mulI(BigInt* num1, BigInt* num2);
 BigInt* divI(BigInt* num1, BigInt* num2);
 BigInt* powI(BigInt* num1, BigInt* num2);
+BigInt* _clone(BigInt* num1);
+BigInt* gcdI(BigInt* num1, BigInt* num2);
+BigInt* lcmI(BigInt* num1, BigInt* num2);
 void _halfI(BigInt* num1);
 int absCompI(BigInt* num1, BigInt* num2);
 int compI(BigInt* num1, BigInt* num2);
 void _reBuildI(BigInt* num);
 void _printI(BigInt* num);
-BigInt* _clone(BigInt* num1);
 
 
 
@@ -517,12 +519,40 @@ BigInt* powI(BigInt* num1, BigInt* num2){
     return mulI(temp, num1);
 }
 
+//gcd
+BigInt* gcdI(BigInt* num1, BigInt* num2){
+    BigInt* n1 = num1;
+    BigInt* n2 = num2;
+    
+    if(absCompI(n1, n2) == -1){
+        BigInt* temp = n1;
+        n1 = n2;
+        n2 = temp;
+    }
+    
+    if(n2->head == n2->tail && (n2->head->digits == 1 || n2->head->digits == 0)){
+        return n1;
+    }
+    
+    BigInt* newN1 = subI(n1, n2);
+    return gcdI(newN1, n2);
+}
+
+//lcm
+BigInt* lcmI(BigInt* num1, BigInt* num2){
+    BigInt* answer = mulI(num1, num2);
+    BigInt* gcd = gcdI(num1, num2);
+    answer = divI(answer, gcd);
+    
+    return answer;
+}
+
 int main(){
-    BigInt* num1 = createI("-5");
-    BigInt* num2 = _clone(num1);
-    BigInt* num = powI(num1, num2);
+    BigInt* num1 = createI("5000");
+    BigInt* num2 = createI("22");
+    BigInt* num = lcmI(num1, num2);
     printI(num);
-    // printf("%ld\n", sizeof(num1) * num1->size);
+    // printf("%d\n", num->size);
 }
 
 // #endif
