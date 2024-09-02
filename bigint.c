@@ -33,11 +33,13 @@ BigInt* addI(BigInt* num1, BigInt* num2);
 BigInt* subI(BigInt* num1, BigInt* num2);
 BigInt* mulI(BigInt* num1, BigInt* num2);
 BigInt* divI(BigInt* num1, BigInt* num2);
+BigInt* powI(BigInt* num1, BigInt* num2);
 void _halfI(BigInt* num1);
 int absCompI(BigInt* num1, BigInt* num2);
 int compI(BigInt* num1, BigInt* num2);
 void _reBuildI(BigInt* num);
 void _printI(BigInt* num);
+BigInt* _clone(BigInt* num1);
 
 
 
@@ -154,6 +156,29 @@ void _printI(BigInt* numI){
         tempNode = tempNode->next;
     }
     
+}
+
+//clone
+BigInt* _clone(BigInt* num1){
+    BigInt* answer = createI("0");
+    Node* answerNode = answer->tail;
+    Node* numNode = num1->tail;
+    answer->sign = num1->sign;
+    
+    while(numNode){
+        answerNode->digits = numNode->digits;
+        
+        answerNode->prev = (Node*) malloc(sizeof(Node));
+        answerNode->prev->next = answerNode;
+        
+        answerNode = answerNode->prev;
+        numNode = numNode->prev;
+    }
+    
+    answer->head = answerNode;
+    _reBuildI(answer);
+    
+    return answer;
 }
 
 //Compare 1
@@ -472,12 +497,32 @@ BigInt* divI(BigInt* num1, BigInt* num2){
     
     return answer;
 }
+
+//pow
+BigInt* powI(BigInt* num1, BigInt* num2){
+    if(num2->head->digits == 0){
+        BigInt* one = createI("1");
+        return one;
+    }
+    
+    BigInt* half = _clone(num2);
+    _halfI(half);
+    
+    BigInt* temp = powI(num1, half);
+    temp = mulI(temp, temp);
+    
+    if(!(num2->tail->digits % 2)){
+        return temp;
+    }
+    return mulI(temp, num1);
+}
+
 int main(){
-    BigInt* num1 = createI("-3187141");
-    BigInt* num2 = createI("318714");
-    BigInt* num = divI(num1, num2);
+    BigInt* num1 = createI("-5");
+    BigInt* num2 = _clone(num1);
+    BigInt* num = powI(num1, num2);
     printI(num);
-    printf("%d\n", num->size);
+    // printf("%ld\n", sizeof(num1) * num1->size);
 }
 
 // #endif
