@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h> 
 
 //Linked List Node Struct
 typedef struct Node{
@@ -462,6 +463,11 @@ void _halfI(BigInt* num){
 
 //div
 BigInt* divI(BigInt* num1, BigInt* num2){
+    if(num2->head->digits == 0){
+        errno = 1;
+        perror("ERROR : DIVIDING BY ZERO");
+        exit(EXIT_FAILURE);
+    }
     BigInt* start = createI("0");
     BigInt* end = num1;
     BigInt* one = createI("1");
