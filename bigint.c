@@ -37,6 +37,7 @@ BigInt* powI(BigInt* num1, BigInt* num2);
 BigInt* _clone(BigInt* num1);
 BigInt* gcdI(BigInt* num1, BigInt* num2);
 BigInt* lcmI(BigInt* num1, BigInt* num2);
+BigInt* modI(BigInt* num1, BigInt* num2);
 void _halfI(BigInt* num1);
 int absCompI(BigInt* num1, BigInt* num2);
 int compI(BigInt* num1, BigInt* num2);
@@ -547,11 +548,32 @@ BigInt* lcmI(BigInt* num1, BigInt* num2){
     return answer;
 }
 
+//mod
+BigInt* modI(BigInt* num1, BigInt* num2){
+    BigInt* q = divI(num1, num2);
+    return subI(num1, mulI(q, num2));
+}
+
+//free
+void freeI(BigInt* num){
+    Node* tempNode = num->head;
+    
+    while(tempNode->next){
+        tempNode = tempNode->next;
+        free(tempNode->prev);
+    }
+    free(tempNode);
+    free(num);
+    
+    return;
+}
+
 int main(){
-    BigInt* num1 = createI("5000");
+    BigInt* num1 = createI("43");
     BigInt* num2 = createI("22");
-    BigInt* num = lcmI(num1, num2);
+    BigInt* num = modI(num1, num2);
     printI(num);
+    freeI(num);
     // printf("%d\n", num->size);
 }
 
