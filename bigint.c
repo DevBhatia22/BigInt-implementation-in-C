@@ -53,6 +53,7 @@ void _printI(BigInt* num);
 //Create
 BigInt* createI(char* str){
     
+    //error handling for unexpected values
     int error = 0;
     if(!((str[0] >= '0' && str[0] <= '9') || (str[0] == '-'))){
         errno = 1;
@@ -71,6 +72,7 @@ BigInt* createI(char* str){
         exit(EXIT_FAILURE);
     }
     
+    //create implementation starts
     BigInt* num = (BigInt*) malloc(sizeof(BigInt));
     num->head = (Node*) malloc(sizeof(Node));
     num->tail = num->head;
@@ -110,6 +112,7 @@ BigInt* createI(char* str){
 }
 
 //Rebuild
+//internal use function
 void _reBuildI(BigInt* num){
     
     Node* tempNode = num->head;
@@ -165,6 +168,7 @@ void printI(BigInt* numI){
 }
 
 //_PrintI
+//internal use function
 void _printI(BigInt* numI){
     
     Node* tempNode = numI->head;
@@ -203,7 +207,7 @@ BigInt* _clone(BigInt* num1){
     return answer;
 }
 
-//Compare 1
+//Compare 1 (ignoring polarity)
 int absCompI(BigInt* num1, BigInt* num2){
     
     if(num1->size > num2->size){
@@ -231,7 +235,7 @@ int absCompI(BigInt* num1, BigInt* num2){
     
 }
 
-//Compare 2
+//Compare 2 (considering polarity)
 int compI(BigInt* num1, BigInt* num2){
     
     if(num1->size > num2->size || (!num1->sign && num2->sign)){
@@ -311,6 +315,7 @@ BigInt* addI(BigInt* num1, BigInt* num2){
         return answer;
     }
     else{
+        //redirecting to subtraction
         BigInt* answer;
         if(num2->sign){
             num2->sign = 0;
@@ -329,6 +334,7 @@ BigInt* addI(BigInt* num1, BigInt* num2){
 //sub
 BigInt* subI(BigInt* num1, BigInt* num2){
     
+    //redirecting to addition
     if(num1->sign && !num2->sign){ // (-x) - y => (-x) + (-y)
         num2->sign = 1;
         BigInt* answer = addI(num1, num2);
@@ -342,6 +348,7 @@ BigInt* subI(BigInt* num1, BigInt* num2){
         return answer;
     }
     
+    //implementation of subtraction
     int borrow = 0;
     BigInt* answer = (BigInt*) malloc(sizeof(BigInt));
     answer->head = (Node*) malloc(sizeof(Node));
@@ -458,6 +465,7 @@ BigInt* mulI(BigInt* num1, BigInt* num2){
 }
 
 //_half
+//internal use function
 void _halfI(BigInt* num){
     Node* tempNode = num->head;
     int carry = 0;
