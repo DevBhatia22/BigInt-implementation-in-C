@@ -3,6 +3,9 @@
         "array": "c",
         "string_view": "c",
         "initializer_list": "c",
-        "utility": "c"
+        "utility": "c",
+        "string.h": "c",
+        "bigint.h": "c",
+        "stdlib.h": "c"
     }
 }

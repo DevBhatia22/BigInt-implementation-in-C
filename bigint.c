@@ -1,52 +1,4 @@
-// #ifndef BIGINT_H
-// #define BIGINT_H
-//Handle case where we include file multiple times
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <errno.h> 
-
-//Linked List Node Struct
-typedef struct Node{
-    int digits;
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-//BigInt Struct
-typedef struct BigInt{
-    Node *head;
-    Node *tail;
-    int size;
-    int sign;
-} BigInt;
-
-
-
-
-// Function prototypes
-void printI(BigInt* num);
-void freeI(BigInt* num);
-BigInt* createI(char* str);
-BigInt* addI(BigInt* num1, BigInt* num2);
-BigInt* subI(BigInt* num1, BigInt* num2);
-BigInt* mulI(BigInt* num1, BigInt* num2);
-BigInt* divI(BigInt* num1, BigInt* num2);
-BigInt* powI(BigInt* num1, BigInt* num2);
-BigInt* _clone(BigInt* num1);
-BigInt* gcdI(BigInt* num1, BigInt* num2);
-BigInt* lcmI(BigInt* num1, BigInt* num2);
-BigInt* modI(BigInt* num1, BigInt* num2);
-void _halfI(BigInt* num1);
-int absCompI(BigInt* num1, BigInt* num2);
-int compI(BigInt* num1, BigInt* num2);
-void _reBuildI(BigInt* num);
-void _printI(BigInt* num);
-
-
-
+#include "bigint.h"
 
 //Functions
 
@@ -60,6 +12,9 @@ BigInt* createI(char* str){
         error = 1;
     }
     for(int i = 1; i < strlen(str); i++){
+        if(str[i] >= '\0'){
+            break;
+        }
         if(!((str[i] >= '0' && str[i] <= '9') || (str[i] == '-'))){
             errno = 1;
             error = 1;
@@ -599,14 +554,3 @@ void freeI(BigInt* num){
     
     return;
 }
-
-int main(){
-    BigInt* num1 = createI("43");
-    BigInt* num2 = createI("23");
-    // BigInt* num = modI(num1, num2);
-    // printI(num);
-    // freeI(num);
-    // printf("%d\n", num->size);
-}
-
-// #endif
