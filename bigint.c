@@ -6,16 +6,17 @@
 BigInt* createI(char* str){
     
     //error handling for unexpected values
+    int e;
     int error = 0;
     if(!((str[0] >= '0' && str[0] <= '9') || (str[0] == '-'))){
         errno = 1;
         error = 1;
     }
-    for(int i = 1; i < strlen(str); i++){
-        if(str[i] >= '\0'){
+    for(e = 1; e < strlen(str); e++){
+        if(str[e] == 10){
             break;
         }
-        if(!((str[i] >= '0' && str[i] <= '9') || (str[i] == '-'))){
+        if(!((str[e] >= '0' && str[e] <= '9') || (str[e] == '-'))){
             errno = 1;
             error = 1;
             break;
@@ -38,9 +39,7 @@ BigInt* createI(char* str){
         num->sign = 1;
         n++;
     }
-    
-    for(int i = strlen(str) - 1; i >= n ; i--){
-        
+    for(int i = e - 1; i >= n ; i--){
         int tempNum = 0;
         int limit = 4;
         
