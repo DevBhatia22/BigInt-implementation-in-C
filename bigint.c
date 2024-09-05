@@ -53,6 +53,24 @@ void _printI(BigInt* num);
 //Create
 BigInt* createI(char* str){
     
+    int error = 0;
+    if(!((str[0] >= '0' && str[0] <= '9') || (str[0] == '-'))){
+        errno = 1;
+        error = 1;
+    }
+    for(int i = 1; i < strlen(str); i++){
+        if(!((str[i] >= '0' && str[i] <= '9') || (str[i] == '-'))){
+            errno = 1;
+            error = 1;
+            break;
+        }
+    }
+    
+    if(error == 1){
+        perror("ERROR : UNEXPECTED CHARECTER IN BIGINT DECLARATION");
+        exit(EXIT_FAILURE);
+    }
+    
     BigInt* num = (BigInt*) malloc(sizeof(BigInt));
     num->head = (Node*) malloc(sizeof(Node));
     num->tail = num->head;
@@ -576,10 +594,10 @@ void freeI(BigInt* num){
 
 int main(){
     BigInt* num1 = createI("43");
-    BigInt* num2 = createI("22");
-    BigInt* num = modI(num1, num2);
-    printI(num);
-    freeI(num);
+    BigInt* num2 = createI("23");
+    // BigInt* num = modI(num1, num2);
+    // printI(num);
+    // freeI(num);
     // printf("%d\n", num->size);
 }
 
